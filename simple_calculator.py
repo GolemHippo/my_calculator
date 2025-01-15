@@ -36,10 +36,23 @@ def calculator():
         result = divide(x,y)
     else:
         print("Error : not-existent operation.")
-        return
+        
 
     
     print(f"Result : {result}")
+    
+    again=input("Do you want to calculate again? (yes/no) : ")
+    if again == "yes":
+        calculator()
+    else:
+        print("Goodbye!")
+        
+    
 
-
+  
 calculator()
+
+
+
+
+
