@@ -23,8 +23,8 @@ def modulo(x,y):
 
 
 #define the sorting function for operators and numbers
-def sort_input(og_input):
-    for word in og_input.split():
+def sort_input(expression):
+    for word in expression.split():
         try:
             numbers.append(float(word))
         except ValueError:
@@ -125,10 +125,10 @@ def delete_history_options(history):
 def menu(operators, numbers):
     while True:
         #ask the user for the operation
-        og_input=input('Enter the operation with a space between each number and operator : x + y - z \nIf you want to exit calculation, enter "exit"\n:')
-        if og_input == 'exit':
+        expression=input('Enter the operation with a space between each number and operator : x + y - z \nIf you want to exit calculation, enter "exit"\n:')
+        if expression == 'exit':
             break
-        sort_input(og_input)
+        sort_input(expression)
         if check_error() == True:
             #check for parentheses
             while '(' in operators:
@@ -152,9 +152,9 @@ def menu(operators, numbers):
             multiply_divide(numbers,operators)
             add_substract(numbers,operators)
             #print the result
-            print(og_input,'=',numbers[0])
+            print(expression,'=',numbers[0])
             #save the operation in the history
-            history.append(og_input + ' = ' + str(numbers[0]))
+            history.append(expression + ' = ' + str(numbers[0]))
         else:
             print('Error, please try again')
         #clear memory
