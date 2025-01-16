@@ -2,7 +2,7 @@
 def add(x, y):
     return x + y
 
-def substract(x, y):
+def subtract(x, y):
     return x - y
 
 def multiply(x, y):
@@ -106,7 +106,7 @@ while True:
                 """result = substract(num1, num2)
                 print(f"{num1} - {num2} = {result}")
                 history.append(f"{num1} - {num2} = {result}")"""
-                history = perform_operation(substract, num1, num2, history, '-')
+                history = perform_operation(subtract, num1, num2, history, '-')
             
             elif choice == 3:
                 """result = multiply(num1, num2)
