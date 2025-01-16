@@ -16,7 +16,11 @@ def multiply(x, y):
     return x * y
 
 def divide(x, y):
-   return x / y
+    try:
+        return x / y
+    except ZeroDivisionError:
+        print("Division by zero is not allowed")
+        return None
 
 def modulo(x,y):
     return x % y
@@ -79,7 +83,9 @@ def add_substract(l_numbers,l_operators):
                 update_calculus(operation,index,l_numbers,l_operators)
                 break
 
-#history function   
+#history functions
+
+#display history
 def display_history(history):
     if not history :
         print("history is empty")
@@ -88,11 +94,12 @@ def display_history(history):
         for i, operation in enumerate(history, 1):
             print(f"{i}. {operation}")
 
+#delete history
 def delete_history(history):
     history.clear()
     print("History deleted")
 
-
+#delete a specific entry
 def delete_history_operation(history):
     display_history(history)
     try:
@@ -105,6 +112,7 @@ def delete_history_operation(history):
     except ValueError:
         print("Invalid index. Please enter a number between 1 and", len(history))
 
+#delete history options
 def delete_history_options(history):
     print("Choose an option:")
     print("1. Delete all history")
@@ -121,7 +129,7 @@ def delete_history_options(history):
     except ValueError:
         print("Invalid choice. Please enter a number between 1 and 2.")
 
-#menu function
+#operations menu
 def menu(operators, numbers):
     while True:
         #ask the user for the operation
@@ -161,6 +169,7 @@ def menu(operators, numbers):
         numbers.clear()
         operators.clear()
 
+#main menu function
 def main():
     while True:
         print("Choose an option:")
