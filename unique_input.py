@@ -3,6 +3,7 @@ numbers = []
 operators = []
 l_numbers = []
 l_operators = []
+history =[]
 
 #define the operations functions
 def add(x, y):
@@ -34,9 +35,9 @@ def check_error():
     for word in operators:
         if word != '*' and word != '+' and word != '/' and word != '-' and word != '(' and word != ')':
             print('error')
-            numbers.clear()
-            operators.clear()
-            break
+            return False
+        else:
+            return True
 
 #advance the calculus
 def update_calculus(operation,index,l_numbers,l_operators):
@@ -78,39 +79,109 @@ def add_substract(l_numbers,l_operators):
                 update_calculus(operation,index,l_numbers,l_operators)
                 break
 
+#history function   
+def display_history(history):
+    if not history :
+        print("history is empty")
+    else:
+        print("History:")
+        for i, operation in enumerate(history, 1):
+            print(f"{i}. {operation}")
+
+def delete_history(history):
+    history.clear()
+    print("History deleted")
+
+
+def delete_history_operation(history):
+    display_history(history)
+    try:
+        index = int(input("Enter the index of the operation to delete: "))
+        if 0 <= index - 1 < len(history):
+            del history[index - 1]
+            print("History operation deleted")
+        else:
+            print("Invalid index. Please enter a number between 1 and", len(history))
+    except ValueError:
+        print("Invalid index. Please enter a number between 1 and", len(history))
+
+def delete_history_options(history):
+    print("Choose an option:")
+    print("1. Delete all history")
+    print("2. Delete a specific entry")
+    try:
+        choice = int(input("Enter your choice (1-2): "))
+        if choice == 1:
+            delete_history(history)
+        elif choice == 2:
+            delete_history_operation(history)
+        
+        else:
+            print("Invalid choice. Please enter a number between 1 and 2.")
+    except ValueError:
+        print("Invalid choice. Please enter a number between 1 and 2.")
+
 #menu function
 def menu(operators, numbers):
     while True:
         #ask the user for the operation
-        og_input=input('Enter the operation with a space between each number and operator : x + y - z \n:')
+        og_input=input('Enter the operation with a space between each number and operator : x + y - z \nIf you want to exit calculation, enter "exit"\n:')
+        if og_input == 'exit':
+            break
         sort_input(og_input)
-        check_error()
-        #check for parentheses
-        while '(' in operators:
-            #find the index of the first parenthese
-            p_index = operators.index('(')
-            #find the index of the closing parenthese
-            p_index2 = operators.index(')')
-            #isolate the operation between the parentheses
-            parenthese_operators = operators[p_index+1:p_index2]
-            #isolate the numbers between the parentheses
-            parenthese_numbers = numbers[p_index:p_index2]
-            #check for multiply or divide operators
-            multiply_divide(parenthese_numbers,parenthese_operators)
-            add_substract(parenthese_numbers,parenthese_operators)
-            #delete the parentheses from the lists
-            del operators[p_index:p_index2+1]
-            del numbers[p_index:p_index2]
-            #replace the parentheses by the result
-            numbers.insert(p_index,parenthese_numbers[0])
-        #finish the calculus
-        multiply_divide(numbers,operators)
-        add_substract(numbers,operators)
-        #print the result
-        print(og_input,'=',numbers[0])
+        if check_error() == True:
+            #check for parentheses
+            while '(' in operators:
+                #find the index of the first parenthese
+                p_index = operators.index('(')
+                #find the index of the closing parenthese
+                p_index2 = operators.index(')')
+                #isolate the operation between the parentheses
+                parenthese_operators = operators[p_index+1:p_index2]
+                #isolate the numbers between the parentheses
+                parenthese_numbers = numbers[p_index:p_index2]
+                #check for multiply or divide operators
+                multiply_divide(parenthese_numbers,parenthese_operators)
+                add_substract(parenthese_numbers,parenthese_operators)
+                #delete the parentheses from the lists
+                del operators[p_index:p_index2+1]
+                del numbers[p_index:p_index2]
+                #replace the parentheses by the result
+                numbers.insert(p_index,parenthese_numbers[0])
+            #finish the calculus
+            multiply_divide(numbers,operators)
+            add_substract(numbers,operators)
+            #print the result
+            print(og_input,'=',numbers[0])
+            #save the operation in the history
+            history.append(og_input + ' = ' + str(numbers[0]))
+        else:
+            print('Error, please try again')
         #clear memory
         numbers.clear()
         operators.clear()
 
+def main():
+    while True:
+        print("Choose an option:")
+        print("1. Perform a calculation")
+        print("2. Display history")
+        print("3. Delete history")
+        print("4. Exit")
+        try:
+            choice = int(input("Enter your choice (1-4): "))
+            if choice == 1:
+                menu(operators, numbers)
+            elif choice == 2:
+                display_history(history)
+            elif choice == 3:
+                delete_history_options(history)
+            elif choice == 4:
+                break
+            else:
+                print("Invalid choice. Please enter a number between 1 and 4.")
+        except ValueError:
+            print("Invalid choice. Please enter a number between 1 and 4.")
+
 if __name__ == '__main__':
-    menu(operators, numbers)
+    main()
