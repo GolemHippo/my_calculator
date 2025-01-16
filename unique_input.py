@@ -68,7 +68,7 @@ def update_calculus(operation,index,l_numbers,l_operators):
                 l_operators.pop(index)
                 #remove the second number from the list
                 l_numbers.pop(index+1)
-
+#keep while loops but use calculus functions
 #check for multiply or divide operators
 def multiply_divide(l_numbers,l_operators):
      while '*' in l_operators or '/' in l_operators:
