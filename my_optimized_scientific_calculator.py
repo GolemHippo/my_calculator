@@ -5,7 +5,7 @@ numbers = []
 operators = []
 history = []
 
-# Define the operations functions
+# Define the arithmetic basic operations functions
 def add(x, y):
     return x + y
 
@@ -23,7 +23,26 @@ def divide(x, y):
     return x / y
 
 def modulo(x, y):
+    if y == 0:
+        print("Error: Cannot perform modulo operation with zero.")
+        return None
     return x % y
+
+def power(x, y):
+    if x == 0 and y < 0:
+        print("Error: Cannot raise 0 to a negative power.")
+        return None
+    if x == 0 and y == 0:
+        print("Error: 0 raised to the power of 0 is undefined.")
+        return None
+    return x ** y
+
+def sqrt(x):
+    if x < 0:
+        print("Error: Cannot calculate the square root of a negative number.")
+        # Return None to indicate an error
+        return None  
+    return x ** 0.5
 
 # Load history from the JSON file
 def load_history():
@@ -36,7 +55,7 @@ def load_history():
 # Save history to the JSON file
 def save_history():
     with open("history.json", "w") as file:
-        json.dump({"history": history}, file, indent=4)
+        json.dump({"History": history}, file, indent=4)
 
 # Define the sorting function for operators and numbers
 def sort_input(expression):
@@ -51,16 +70,25 @@ def sort_input(expression):
 # Check for errors in the operators list
 def check_error():
     for word in operators:
-        if word not in ['*', '+', '/', '-', '(', ')']:
+        if word not in ['*', '+', '/', '-', '(', ')','%',  '**', 'sqrt']:
             print('Error: Invalid operator detected.')
             return False
     return True
 
 # Advance the calculus
 def update_calculus(operation, index, numbers, operators):
+    #The square root is a unitary operation , it requires only one operand
+    if operation == 'sqrt':
+        result = operation(numbers[index])
+        # If there was an error , negative numbers
+        if result is None:
+            return False
+        numbers[index] = result
+        operators.pop(index)
+        return True
     # Save the result in a variable
     result = operation(numbers[index], numbers[index + 1])
-    # If there was an error (e.g., division by zero)
+    # If there was an error , division by zero
     if result is None:  
         return False
     # Replace the first number by the result
@@ -73,20 +101,32 @@ def update_calculus(operation, index, numbers, operators):
 
 # Check for multiply or divide operators
 def multiply_divide(numbers, operators):
-    while '*' in operators or '/' in operators:
+    while '*' in operators or '/' in operators or '**' in operators or 'sqrt' in operators:
         # Isolate and execute each operation in the list
         for index, operator in enumerate(operators):
             if operator == '*':
                 operation = multiply
                 if not update_calculus(operation, index, numbers, operators):
-                    # Exit on error (e.g., division by zero)
+                    # Exit on error 
                     return False  
                 break
             if operator == '/':
                 operation = divide
                 if not update_calculus(operation, index, numbers, operators):
-                     # Exit on error (e.g., division by zero)
+                     # Exit on error ( division by zero)
                     return False 
+                break
+            if operator == '**':
+                operation = power
+                if not update_calculus(operation, index, numbers, operators):
+                    # Exit on error ( power by zero or negative power)
+                    return False
+                break
+            if operator =='sqrt':
+                operation = sqrt
+                if not update_calculus(operation, index, numbers, operators):
+                    # Exit on error ( negative number)
+                    return False
                 break
     # No error occurred
     return True  
@@ -103,7 +143,9 @@ def add_substract(numbers, operators):
             if operator == '-':
                 operation = substract
                 update_calculus(operation, index, numbers, operators)
-
+                break
+    return True
+                
 # Display history function
 def display_history():
     if not history:
@@ -156,7 +198,7 @@ def delete_history_options():
 # Menu function
 def menu():
     while True:
-        expression = input('Enter the operation (e.g., x + y - z), or type "exit" to quit:\n')
+        expression = input('Enter the operation (x + y - z), or type "exit" to quit:\n')
         if expression == 'exit':
             break
         sort_input(expression)
@@ -175,9 +217,10 @@ def menu():
 
             # Perform the remaining calculations
             if not multiply_divide(numbers, operators):
-                print("Calculation failed due to division by zero.")
+                print("Calculation failed due to error.")
                 # Skip the current loop and ask for the next calculation
-                continue  
+                continue 
+            
             add_substract(numbers, operators)
 
             # Display the result
@@ -220,6 +263,9 @@ def main():
                 print("Invalid choice. Please enter a number between 1 and 4.")
         except ValueError:
             print("Invalid choice. Please enter a number between 1 and 4.")
+        except KeyboardInterrupt:
+            print("\nExiting the program...")
+            break
 
 if __name__ == '__main__':
     main()
