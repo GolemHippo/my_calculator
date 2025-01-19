@@ -1,4 +1,5 @@
 import json
+import os
 
 # Initialize the numbers and operators lists
 numbers = []
@@ -9,7 +10,7 @@ history = []
 def add(x, y):
     return x + y
 
-def substract(x, y):
+def subtract(x, y):
     return x - y
 
 def multiply(x, y):
@@ -23,9 +24,6 @@ def divide(x, y):
     return x / y
 
 def modulo(x, y):
-    if y == 0:
-        print("Error: Cannot perform modulo operation with zero.")
-        return None
     return x % y
 
 def power(x, y):
@@ -48,7 +46,7 @@ def sqrt(x):
 def load_history():
     try:
         with open("history.json", "r") as file:
-            return json.load(file)["history"]
+            return json.load(file)["History"]
     except FileNotFoundError:
         return []
 
@@ -107,7 +105,7 @@ def multiply_divide(numbers, operators):
             if operator == '*':
                 operation = multiply
                 if not update_calculus(operation, index, numbers, operators):
-                    # Exit on error 
+                    # Exit on error ( division by zero)
                     return False  
                 break
             if operator == '/':
@@ -119,7 +117,7 @@ def multiply_divide(numbers, operators):
             if operator == '**':
                 operation = power
                 if not update_calculus(operation, index, numbers, operators):
-                    # Exit on error ( power by zero or negative power)
+                    # Exit on error ( division by zero)
                     return False
                 break
             if operator =='sqrt':
@@ -133,15 +131,15 @@ def multiply_divide(numbers, operators):
 
 
 # Check for addition or substraction operators
-def add_substract(numbers, operators):
-    while '+' in operators or '-' in operators:
+def add_subtract(numbers, operators):
+    while '+' in operators or '-' in operators or 'sqrt' in operators:
         for index, operator in enumerate(operators):
             if operator == '+':
                 operation = add
                 update_calculus(operation, index, numbers, operators)
                 break
             if operator == '-':
-                operation = substract
+                operation = subtract
                 update_calculus(operation, index, numbers, operators)
                 break
     return True
@@ -181,22 +179,27 @@ def delete_history_operation():
 
 # Menu delete history
 def delete_history_options():
-    print("Choose an option:")
-    print("1. Delete all history")
-    print("2. Delete a specific entry")
+    print(
+    "\n======= Choose an option ======="
+    "\n1. Delete all history"
+    "\n2. Delete a specific entry"
+    "\n3. Exit"
+    )
     try:
-        choice = int(input("Enter your choice (1-2): "))
+        choice = int(input("Enter your choice (1-3): "))
         if choice == 1:
             delete_history()
         elif choice == 2:
             delete_history_operation()
+        elif choice == 3:
+            return
         else:
             print("Invalid choice. Please enter a number between 1 and 2.")
     except ValueError:
         print("Invalid choice. Please enter a number between 1 and 2.")
 
 # Menu function
-def menu():
+def perform_calculation():
     while True:
         expression = input('Enter the operation (x + y - z), or type "exit" to quit:\n')
         if expression == 'exit':
@@ -210,7 +213,7 @@ def menu():
                 parenthese_operators = operators[p_index1 + 1:p_index2]
                 parenthese_numbers = numbers[p_index1:p_index2]
                 multiply_divide(parenthese_numbers, parenthese_operators)
-                add_substract(parenthese_numbers, parenthese_operators)
+                add_subtract(parenthese_numbers, parenthese_operators)
                 del operators[p_index1:p_index2 + 1]
                 del numbers[p_index1:p_index2]
                 numbers.insert(p_index1, parenthese_numbers[0])
@@ -221,7 +224,7 @@ def menu():
                 # Skip the current loop and ask for the next calculation
                 continue 
             
-            add_substract(numbers, operators)
+            add_subtract(numbers, operators)
 
             # Display the result
             if numbers:
@@ -238,21 +241,27 @@ def menu():
         numbers.clear()
         operators.clear()
 
+def menu():
+    print(
+        "\n======== Menu =========="
+        "\n1. Perform a calculation"
+        "\n2. Display history"
+        "\n3. Delete history"
+        "\n4. Exit"
+        )
 # Main function to run the calculator program
 def main():
     global history
     # Load history from the JSON file and assign it to the global variable   
-    history = load_history()  
+    history = load_history()
+    
     while True:
-        print("Choose an option:")
-        print("1. Perform a calculation")
-        print("2. Display history")
-        print("3. Delete history")
-        print("4. Exit")
+        menu() 
+        
         try:
             choice = int(input("Enter your choice (1-4): "))
             if choice == 1:
-                menu()
+                perform_calculation()
             elif choice == 2:
                 display_history()
             elif choice == 3:
