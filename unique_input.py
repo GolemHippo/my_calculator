@@ -133,21 +133,21 @@ def menu(operators, numbers):
             #check for parentheses
             while '(' in operators:
                 #find the index of the first parenthese
-                p_index = operators.index('(')
+                p_index1 = operators.index('(')
                 #find the index of the closing parenthese
                 p_index2 = operators.index(')')
                 #isolate the operation between the parentheses
-                parenthese_operators = operators[p_index+1:p_index2]
+                parenthese_operators = operators[p_index1+1:p_index2]
                 #isolate the numbers between the parentheses
-                parenthese_numbers = numbers[p_index:p_index2]
+                parenthese_numbers = numbers[p_index1:p_index2]
                 #check for multiply or divide operators
                 multiply_divide(parenthese_numbers,parenthese_operators)
                 add_substract(parenthese_numbers,parenthese_operators)
                 #delete the parentheses from the lists
-                del operators[p_index:p_index2+1]
-                del numbers[p_index:p_index2]
+                del operators[p_index1:p_index2+1]
+                del numbers[p_index1:p_index2]
                 #replace the parentheses by the result
-                numbers.insert(p_index,parenthese_numbers[0])
+                numbers.insert(p_index1,parenthese_numbers[0])
             #finish the calculus
             multiply_divide(numbers,operators)
             add_substract(numbers,operators)
